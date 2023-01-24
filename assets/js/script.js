@@ -3,11 +3,29 @@ var searchFormEl = document.querySelector('#search-form');
 var searchResultsDiv = document.querySelector('#search-Results')
 var activeCityDiv = document.querySelector('#active-city-display');
 
-let recentSearchArray = [];
+var oneDayForecast = document.querySelector('#oneOut-Forecast');
+var twoDayForecast = document.querySelector('#twoOut-Forecast');
+var threeDayForecast = document.querySelector('#threeOut-Forecast');
+var fourDayForecast = document.querySelector('#fourOut-Forecast');
+var fiveDayForecast = document.querySelector('#fiveOut-Forecast');
+
+
+
+let recentSearchArray = new Array(9);
 let weatherApiKey = "955a5d965b004042021d1610ea49b6a8";
 let lat = "" ;
 let lon = "";
 
+let now = dayjs();
+let formattedDisplayDate = now.format('MM/DD/YYYY');
+let oneOutDate = now.add(1, 'day').format('MM/DD/YYYY');
+let twoOutDate = now.add(2, 'day').format('MM/DD/YYYY');
+let threeOutDate = now.add(3, 'day').format('MM/DD/YYYY');
+let fourOutDate = now.add(4, 'day').format('MM/DD/YYYY');
+let fiveOutDate = now.add(5, 'day').format('MM/DD/YYYY');
+
+
+console.log("recent memory:", recentSearchArray);
 
 //------------Search Bar Feature------------
 function handleSearchFormSubmit(event) {
@@ -40,7 +58,7 @@ fetch(geoLocAPI)
         console.log("LocRes Length: ", locRes.length)
         if (locRes.length === 0) {
             console.log('No results found!');
-            //resultContentEl.innerHTML = '<h3>No results found, search again!</h3>';
+            searchResultsDiv.innerHTML = '<h4>No results found. Search again.</h4>';
           } else {
             for (var i = 0; i < locRes.length; i++) {
             selectCity(locRes[i]);
@@ -53,10 +71,10 @@ fetch(geoLocAPI)
 //****display search results for exact location to select***** 
 
 let selectCity = (resultObj) => {
+        
         const resultsDiv = document.createElement('div');
         searchResultsDiv.append(resultsDiv);
-        
-        
+        console.log("result div: ". resultsDiv)
         resultsDiv.innerHTML +=
         resultObj.name + " ";
         
@@ -70,11 +88,19 @@ let selectCity = (resultObj) => {
             let searchedLon = resultObj.lon;
             let searchedLat = resultObj.lat;
             printSearchResults(searchedLon, searchedLat);
+            populateRecentSearches();
+            let name =  resultObj.name + " " + resultObj.state;
+            let lon = searchedLon;
+            let lat = searchedLat;
+          
+            saveViewedCity(name, lon, lat);
             searchResultsDiv.innerHTML = "";
-            
-
         }
-        resultsDiv.addEventListener("click", printClick) 
+        resultsDiv.addEventListener("click",() => {
+        printClick();
+        populateRecentSearches(); 
+      
+      });
 }
 
 //clear search options function
@@ -93,38 +119,179 @@ let mainForecastAPI = "http://api.openweathermap.org/data/2.5/forecast?lat=" + r
         return response.json();
       })
       .then(function (locRes) {
-        console.log("forecast:", locRes)
-        const resultBody = document.createElement('div');
-        activeCityDiv.append(resultBody);
-       
-        resultBody.innerHTML +=
-        '<strong>Temp:</strong> ' + locRes.list[0].main.temp + " F" + '<br/>';
-    
-        resultBody.innerHTML +=
-            '<strong>Wind:</strong> ' + locRes.list[0].wind.speed + " MPH" + '<br/>';
-
-        resultBody.innerHTML +=
-            '<strong>Humidity: </strong>' + locRes.list[0].main.humidity + "%" + '<br/>';
+        printCurrentWeather(locRes);
+        printFiveDayWeather(locRes);
         })
       .catch(function (error) {
         console.error(error);
       })
 }
 
+  let printCurrentWeather = (locRes) => {
+    console.log("forecast:", locRes)
+       
+        const resultBody = document.createElement('div');
+        activeCityDiv.innerHTML = ""
+        activeCityDiv.append(resultBody);
+       
+       
+        resultBody.innerHTML +=
+        '<h3> Today in ' + locRes.city.name + '</h3>';
+        resultBody.innerHTML +=
+          '<h3>' + formattedDisplayDate + '</h3>';
+        resultBody.innerHTML +=
+          '<img src="http://openweathermap.org/img/wn/' + locRes.list[0].weather[0].icon + '@4x.png">' + '<br/>';
+        resultBody.innerHTML +=
+        '<strong>Temp:</strong> ' + locRes.list[0].main.temp + " F" + '<br/>';
+        resultBody.innerHTML +=
+            '<strong>Wind:</strong> ' + locRes.list[0].wind.speed + " MPH" + '<br/>';
+        resultBody.innerHTML +=
+            '<strong>Humidity: </strong>' + locRes.list[0].main.humidity + "%" + '<br/>';
+}
+let printFiveDayWeather = (locRes) => {
+  console.log("5 day forecast:", locRes)
+      oneDayForecast.innerHTML = "";
+      twoDayForecast.innerHTML = "";
+      threeDayForecast.innerHTML = "";
+      fourDayForecast.innerHTML = "";
+      fiveDayForecast.innerHTML = "";
+      
 
+      oneDayForecast.innerHTML +=
+      '<h3>' + oneOutDate + '</h3>'
+      oneDayForecast.innerHTML +=
+      '<img src="http://openweathermap.org/img/wn/' + locRes.list[7].weather[0].icon + '@2x.png">' + '<br/>';
+      oneDayForecast.innerHTML +=
+      '<strong>Temp:</strong> ' + locRes.list[7].main.temp + " F" + '<br/>';
+      oneDayForecast.innerHTML +=
+          '<strong>Wind:</strong> ' + locRes.list[7].wind.speed + " MPH" + '<br/>';
+      oneDayForecast.innerHTML +=
+          '<strong>Humidity: </strong>' + locRes.list[7].main.humidity + "%" + '<br/>';
+      
+      twoDayForecast.innerHTML +=  
+        '<h3>' + twoOutDate + '</h3>'
+      twoDayForecast.innerHTML +=
+        '<img src="http://openweathermap.org/img/wn/' + locRes.list[15].weather[0].icon + '@2x.png">' + '<br/>';
+      twoDayForecast.innerHTML +=
+        '<strong>Temp:</strong> ' + locRes.list[15].main.temp + " F" + '<br/>';
+      twoDayForecast.innerHTML +=
+        '<strong>Wind:</strong> ' + locRes.list[15].wind.speed + " MPH" + '<br/>';
+      twoDayForecast.innerHTML +=
+        '<strong>Humidity: </strong>' + locRes.list[15].main.humidity + "%" + '<br/>';
+      
+      threeDayForecast.innerHTML +=  
+        '<h3>' + threeOutDate + '</h3>'
+      threeDayForecast.innerHTML +=
+        '<img src="http://openweathermap.org/img/wn/' + locRes.list[23].weather[0].icon + '@2x.png">' + '<br/>';
+      threeDayForecast.innerHTML +=
+        '<strong>Temp:</strong> ' + locRes.list[23].main.temp + " F" + '<br/>';
+      threeDayForecast.innerHTML +=
+        '<strong>Wind:</strong> ' + locRes.list[23].wind.speed + " MPH" + '<br/>';
+      threeDayForecast.innerHTML +=
+        '<strong>Humidity: </strong>' + locRes.list[23].main.humidity + "%" + '<br/>';
+      
+      fourDayForecast.innerHTML +=  
+        '<h3>' + fourOutDate + '</h3>'
+      fourDayForecast.innerHTML +=
+        '<img src="http://openweathermap.org/img/wn/' + locRes.list[31].weather[0].icon + '@2x.png">' + '<br/>';
+      fourDayForecast.innerHTML +=
+        '<strong>Temp:</strong> ' + locRes.list[31].main.temp + " F" + '<br/>';
+      fourDayForecast.innerHTML +=
+        '<strong>Wind:</strong> ' + locRes.list[31].wind.speed + " MPH" + '<br/>';
+      fourDayForecast.innerHTML +=
+        '<strong>Humidity: </strong>' + locRes.list[31].main.humidity + "%" + '<br/>';
 
-
-    // set up `<div>` to hold result content
-
-  
-    //resultBody.append(titleEl, bodyContentEl, linkButtonEl);
-  
-    //earchHistoryDiv.append(searchedCard);
-  
+      fiveDayForecast.innerHTML +=  
+        '<h3>' + fiveOutDate + '</h3>'
+      fiveDayForecast.innerHTML +=
+        '<img src="http://openweathermap.org/img/wn/' + locRes.list[39].weather[0].icon + '@2x.png">' + '<br/>';
+      fiveDayForecast.innerHTML +=
+        '<strong>Temp:</strong> ' + locRes.list[39].main.temp + " F" + '<br/>';
+      fiveDayForecast.innerHTML +=
+        '<strong>Wind:</strong> ' + locRes.list[39].wind.speed + " MPH" + '<br/>';
+      fiveDayForecast.innerHTML +=
+        '<strong>Humidity: </strong>' + locRes.list[39].main.humidity + "%" + '<br/>';
+}
 
 
 
 //-----------------display Search history--------------
+
+  //create array to store user search values
+  var recentSearchesArray = [];
+  //set the location you want these to display here.... 
+  const recentSearchDisplay = document.querySelector("#search-history");
+
+  //invoke so that recent searches are populated after page loads
+  populateRecentSearches();
+  
+  //populate the recent search display with the user's recent player searches
+  function populateRecentSearches() {
+    //this sets location for buttons to append to.
+    recentSearchDisplay.innerHTML = "Recently Viewed Cities:" + '<br/>';
+  
+    //get the recent searches out of local storage
+    var recentSearchArray = getRecentSearches();
+  
+    // this loop works in reverse to display newest first
+    for (let i = recentSearchArray.length - 1; i >= 0; i--) {
+      //to change button properties - target button id "result-button"
+      const recentSearched = "result-button"
+      console.log("recent search array: ", recentSearchArray)
+
+      const newSearchedButton = document.createElement("button");
+      newSearchedButton.setAttribute("id", recentSearched);
+      newSearchedButton.setAttribute("class", 'form-input w-100');
+
+      recentSearchDisplay.appendChild(newSearchedButton);
+        newSearchedButton.textContent = recentSearchArray[i].name;
+        //add functionality to button and send saved array info to display API
+        newSearchedButton.addEventListener("click", function(){
+                printSearchResults(recentSearchArray[i].lon, recentSearchArray[i].lat)
+      })
+    }
+  }
+
+
+  //if there is already an array in local storage then parse it and assign to variable "recentSearchesArray"
+  function getRecentSearches() {
+    storedSearches = localStorage.getItem("recentSearches");
+    if (storedSearches) {
+      recentSearchesArray = JSON.parse(storedSearches);
+    }
+    return recentSearchesArray;
+  }
+  
+  //If the player name does not already exist and less than 5 display
+  //call the function and plass playerID and playerName to save as key value. 
+  function saveViewedCity(name, lon, lat) {
+  //create an object and save both properties at once
+  
+    let savedEntry = {
+      name: name,
+      lon: lon,
+      lat: lat
+    }
+
+    console.log("save function receiving:", savedEntry)
+
+    //this checks to see if the object in the array already exists. 
+    //If not, it will push entry or shift if there is already 5 in array memory
+    if (
+      recentSearchesArray.includes(savedEntry) === false &&
+      recentSearchesArray.length < 9
+    ) {
+      recentSearchesArray.push(savedEntry);
+      localStorage.setItem("recentSearches", JSON.stringify(recentSearchesArray));
+    } else if (
+      recentSearchesArray.includes(savedEntry) === false &&
+      (recentSearchesArray.length = 9)
+    ) {
+      recentSearchesArray.shift();
+      recentSearchesArray.push(savedEntry);
+      localStorage.setItem("recentSearches", JSON.stringify(recentSearchesArray));
+    }
+  }
 //***********GEOLOC History Save********
 
 

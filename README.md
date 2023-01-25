@@ -10,7 +10,7 @@ The purpose of this project was to create a dashboard that allows a user to sear
 No installation necessary. 
 
 ## Visual
-![image](./Assets/05-third-party-apis-homework-demo.gif)
+![image](./assets/images/weatherdashboard.gif)
 
 ## Usage
 

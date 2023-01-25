@@ -45,7 +45,7 @@ function handleSearchFormSubmit(event) {
 
 //*****GEOLOC Func*****
 function geoLocSearchAPI(searchedCity) {
-let geoLocAPI = "http://api.openweathermap.org/geo/1.0/direct?q=" + searchedCity + "&limit=5&appid=" + weatherApiKey
+let geoLocAPI = "https://api.openweathermap.org/geo/1.0/direct?q=" + searchedCity + "&limit=5&appid=" + weatherApiKey
 fetch(geoLocAPI)
       .then(function (response) {
         if (!response.ok) {
@@ -110,7 +110,7 @@ let selectCity = (resultObj) => {
 //convert lon & lat to city to display. 
 function printSearchResults(resultLon, resultLat) {
 //api for lat&lon to weather display. 
-let mainForecastAPI = "http://api.openweathermap.org/data/2.5/forecast?lat=" + resultLat + "&lon=" + resultLon + "&appid=" + weatherApiKey + "&units=imperial"
+let mainForecastAPI = "https://api.openweathermap.org/data/2.5/forecast?lat=" + resultLat + "&lon=" + resultLon + "&appid=" + weatherApiKey + "&units=imperial"
     fetch(mainForecastAPI)
       .then(function (response) {
         if (!response.ok) {
@@ -140,7 +140,7 @@ let mainForecastAPI = "http://api.openweathermap.org/data/2.5/forecast?lat=" + r
         resultBody.innerHTML +=
           '<h3>' + formattedDisplayDate + '</h3>';
         resultBody.innerHTML +=
-          '<img src="http://openweathermap.org/img/wn/' + locRes.list[0].weather[0].icon + '@4x.png">' + '<br/>';
+          '<img src="https://openweathermap.org/img/wn/' + locRes.list[0].weather[0].icon + '@4x.png">' + '<br/>';
         resultBody.innerHTML +=
         '<strong>Temp:</strong> ' + locRes.list[0].main.temp + " F" + '<br/>';
         resultBody.innerHTML +=
@@ -162,7 +162,7 @@ let printFiveDayWeather = (locRes) => {
       oneDayForecast.innerHTML +=
       '<h3>' + oneOutDate + '</h3>'
       oneDayForecast.innerHTML +=
-      '<img src="http://openweathermap.org/img/wn/' + locRes.list[7].weather[0].icon + '@2x.png">' + '<br/>';
+      '<img src="https://openweathermap.org/img/wn/' + locRes.list[7].weather[0].icon + '@2x.png">' + '<br/>';
       oneDayForecast.innerHTML +=
       '<strong>Temp:</strong> ' + locRes.list[7].main.temp + " F" + '<br/>';
       oneDayForecast.innerHTML +=
@@ -173,7 +173,7 @@ let printFiveDayWeather = (locRes) => {
       twoDayForecast.innerHTML +=  
         '<h3>' + twoOutDate + '</h3>'
       twoDayForecast.innerHTML +=
-        '<img src="http://openweathermap.org/img/wn/' + locRes.list[15].weather[0].icon + '@2x.png">' + '<br/>';
+        '<img src="https://openweathermap.org/img/wn/' + locRes.list[15].weather[0].icon + '@2x.png">' + '<br/>';
       twoDayForecast.innerHTML +=
         '<strong>Temp:</strong> ' + locRes.list[15].main.temp + " F" + '<br/>';
       twoDayForecast.innerHTML +=
@@ -184,7 +184,7 @@ let printFiveDayWeather = (locRes) => {
       threeDayForecast.innerHTML +=  
         '<h3>' + threeOutDate + '</h3>'
       threeDayForecast.innerHTML +=
-        '<img src="http://openweathermap.org/img/wn/' + locRes.list[23].weather[0].icon + '@2x.png">' + '<br/>';
+        '<img src="https://openweathermap.org/img/wn/' + locRes.list[23].weather[0].icon + '@2x.png">' + '<br/>';
       threeDayForecast.innerHTML +=
         '<strong>Temp:</strong> ' + locRes.list[23].main.temp + " F" + '<br/>';
       threeDayForecast.innerHTML +=
@@ -195,7 +195,7 @@ let printFiveDayWeather = (locRes) => {
       fourDayForecast.innerHTML +=  
         '<h3>' + fourOutDate + '</h3>'
       fourDayForecast.innerHTML +=
-        '<img src="http://openweathermap.org/img/wn/' + locRes.list[31].weather[0].icon + '@2x.png">' + '<br/>';
+        '<img src="https://openweathermap.org/img/wn/' + locRes.list[31].weather[0].icon + '@2x.png">' + '<br/>';
       fourDayForecast.innerHTML +=
         '<strong>Temp:</strong> ' + locRes.list[31].main.temp + " F" + '<br/>';
       fourDayForecast.innerHTML +=
@@ -206,7 +206,7 @@ let printFiveDayWeather = (locRes) => {
       fiveDayForecast.innerHTML +=  
         '<h3>' + fiveOutDate + '</h3>'
       fiveDayForecast.innerHTML +=
-        '<img src="http://openweathermap.org/img/wn/' + locRes.list[39].weather[0].icon + '@2x.png">' + '<br/>';
+        '<img src="https://openweathermap.org/img/wn/' + locRes.list[39].weather[0].icon + '@2x.png">' + '<br/>';
       fiveDayForecast.innerHTML +=
         '<strong>Temp:</strong> ' + locRes.list[39].main.temp + " F" + '<br/>';
       fiveDayForecast.innerHTML +=

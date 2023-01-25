@@ -17,33 +17,34 @@
   <div class="flex-row align-start align-stretch-md align-content-start align-content-stretch-md min-100-vh bg-primary">
       <div class="col-12 col-md-3 bg-light p-3">
         <div class = "dashboard-banner">
-          <h1 class="text-primary">Weather Dashboard</h1>
+          <h1 class="text-primary text-center">Weather Dashboard</h1>
         </div>
         <form id="search-form" class="mb-2">
-          <input id="search-input" class="form-input w-100" type="text" placeholder="Search!">
-          <button class="btn btn-info btn-block">Search...</button>
+          <input id="search-input" class="form-input w-100" type="text" placeholder="Enter city name...">
+          <button class="btn btn-info btn-block b-3">Search...</button>
         </form>
           <div id ="search-Results"></div>
-            <div class="p-3 text-light">
-            <div id="search-history"></div>
+            <h3 class = "h3 text-center pt-4">Search History:</h3>
+            <div class="p-3 text-light" data-bs-toggle="collapse">
+            <div id="search-history" data-bs-toggle="collapse"></div>
           </div>
       </div>
     
-  
-    <div class="col-12 col-md-9 p-3 text-light">
-      <div id = "active-city-display"> 
-        <h2 class="searched-city-display"></h2>
+
+    <div class="col-12 col-md-9 p-3 text-light align-items-center text-center">
+      <div class = "flex-column align-content-center align-items-center gap-3 p-4" id = "active-city-display"> 
       </div>
-      <div class = "d-inline-flex p-2 id" = "Five-Day-Forecast">
-        <div id = "oneOut-Forecast"></div>
-        <div id = "twoOut-Forecast"></div>
-        <div id = "threeOut-Forecast"></div>
-        <div id = "fourOut-Forecast"></div>
-        <div id = "fiveOut-Forecast"></div>
+      <div class = "d-flex justify-content-around align-items-center flex-wrap gap-2 p-3 flex-grow-1" id = "Five-Day-Forecast">
+         
+        <div id = "oneOut-Forecast" class = "p-4"></div>
+        <div id = "twoOut-Forecast" class = "p-4"></div>
+        <div id = "threeOut-Forecast" class = "p-4"></div>
+        <div id = "fourOut-Forecast" class = "p-4"></div>
+        <div id = "fiveOut-Forecast"class = "p-4"></div>
       </div> 
   </div>
   </div>
-  
+ 
   <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.3/dayjs.min.js"
   integrity="sha256-iu/zLUB+QgISXBLCW/mcDi/rnf4m4uEDO0wauy76x7U="
   crossorigin="anonymous"></script>

@@ -1,4 +1,3 @@
-let searchHistoryDiv = document.querySelector('#search-history');
 var searchFormEl = document.querySelector('#search-form');
 var searchResultsDiv = document.querySelector('#search-Results')
 var activeCityDiv = document.querySelector('#active-city-display');
@@ -35,10 +34,11 @@ function handleSearchFormSubmit(event) {
 
   
     if (!searchInputVal) {
+      searchResultsDiv.innerHTML = '<h4>Please enter city name and try again.</h4>'
       console.error('You need a search input value!');
       return;
     }
-  
+    searchResultsDiv.innerHTML = ""
     geoLocSearchAPI(searchInputVal);
   }
   searchFormEl.addEventListener('submit', handleSearchFormSubmit);
@@ -75,6 +75,8 @@ let selectCity = (resultObj) => {
         const resultsDiv = document.createElement('div');
         searchResultsDiv.append(resultsDiv);
         console.log("result div: ". resultsDiv)
+        resultsDiv.setAttribute("role", 'button')
+        resultsDiv.setAttribute("class", 'btn btn-info btn-block bg-#0dcaf0 text-light');
         resultsDiv.innerHTML +=
         resultObj.name + " ";
         
@@ -88,18 +90,16 @@ let selectCity = (resultObj) => {
             let searchedLon = resultObj.lon;
             let searchedLat = resultObj.lat;
             printSearchResults(searchedLon, searchedLat);
-            populateRecentSearches();
             let name =  resultObj.name + " " + resultObj.state;
             let lon = searchedLon;
             let lat = searchedLat;
           
             saveViewedCity(name, lon, lat);
+            populateRecentSearches(name, lon, lat);
             searchResultsDiv.innerHTML = "";
         }
         resultsDiv.addEventListener("click",() => {
         printClick();
-        populateRecentSearches(); 
-      
       });
 }
 
@@ -136,7 +136,7 @@ let mainForecastAPI = "http://api.openweathermap.org/data/2.5/forecast?lat=" + r
        
        
         resultBody.innerHTML +=
-        '<h3> Today in ' + locRes.city.name + '</h3>';
+        '<h2><strong> Today in ' + locRes.city.name + '</strong></h3>';
         resultBody.innerHTML +=
           '<h3>' + formattedDisplayDate + '</h3>';
         resultBody.innerHTML +=
@@ -148,6 +148,8 @@ let mainForecastAPI = "http://api.openweathermap.org/data/2.5/forecast?lat=" + r
         resultBody.innerHTML +=
             '<strong>Humidity: </strong>' + locRes.list[0].main.humidity + "%" + '<br/>';
 }
+
+//display five day weather forecast on screen with below
 let printFiveDayWeather = (locRes) => {
   console.log("5 day forecast:", locRes)
       oneDayForecast.innerHTML = "";
@@ -220,36 +222,40 @@ let printFiveDayWeather = (locRes) => {
   //create array to store user search values
   var recentSearchesArray = [];
   //set the location you want these to display here.... 
-  const recentSearchDisplay = document.querySelector("#search-history");
-
-  //invoke so that recent searches are populated after page loads
   populateRecentSearches();
   
   //populate the recent search display with the user's recent player searches
-  function populateRecentSearches() {
-    //this sets location for buttons to append to.
-    recentSearchDisplay.innerHTML = "Recently Viewed Cities:" + '<br/>';
+  function populateRecentSearches(name, lon, lat) {
+    
+  const recentSearchDisplay = document.querySelector("#search-history");
+  recentSearchDisplay.innerHTML = "";
   
     //get the recent searches out of local storage
     var recentSearchArray = getRecentSearches();
-  
+  // if (name && lon && lat) {
+  //   console.log("about to shift here: ")
+  //   recentSearchArray.shift({name,lon,lat})
+  // }
+
+  console.log("recent search array (under unshift): ", recentSearchArray)
+  console.log("name,lon,lat : ", {name,lon,lat})
+
     // this loop works in reverse to display newest first
     for (let i = recentSearchArray.length - 1; i >= 0; i--) {
-      //to change button properties - target button id "result-button"
       const recentSearched = "result-button"
-      console.log("recent search array: ", recentSearchArray)
-
       const newSearchedButton = document.createElement("button");
       newSearchedButton.setAttribute("id", recentSearched);
-      newSearchedButton.setAttribute("class", 'form-input w-100');
-
+      newSearchedButton.setAttribute("class", 'btn btn-info btn-block bg-warning text-dark');
+      
       recentSearchDisplay.appendChild(newSearchedButton);
         newSearchedButton.textContent = recentSearchArray[i].name;
         //add functionality to button and send saved array info to display API
         newSearchedButton.addEventListener("click", function(){
                 printSearchResults(recentSearchArray[i].lon, recentSearchArray[i].lat)
+                getRecentSearches()
       })
     }
+    console.log({recentSearchDisplay})
   }
 
 
@@ -261,9 +267,7 @@ let printFiveDayWeather = (locRes) => {
     }
     return recentSearchesArray;
   }
-  
-  //If the player name does not already exist and less than 5 display
-  //call the function and plass playerID and playerName to save as key value. 
+  //save viewed city to history
   function saveViewedCity(name, lon, lat) {
   //create an object and save both properties at once
   
@@ -291,97 +295,5 @@ let printFiveDayWeather = (locRes) => {
       recentSearchesArray.push(savedEntry);
       localStorage.setItem("recentSearches", JSON.stringify(recentSearchesArray));
     }
+    
   }
-//***********GEOLOC History Save********
-
-
-
-//******Search History Local Storage Function*****/
-/*
-function getRecentSearches() {
-    storedSearches = localStorage.getItem("recentSearches");
-    if (storedSearches) {
-      recentSearchesArray = JSON.parse(storedSearches);
-    }
-    return recentSearchesArray;
-  }
-
-*/
-//******Search History API Function*****
-/*
-function sHistoryApi(query, format) {
-    var geoLocAPIUrl = 'https://www.loc.gov/search/?fo=json';
-  
-    if (format) {
-      geoLocAPIUrl = 'https://www.loc.gov/' + format + '/?fo=json';
-    }
-  
-    geoLocAPIUrl = geoLocAPIUrl + '&q=' + query;
-  
-    fetch(geoLocAPIUrl)
-      .then(function (response) {
-        if (!response.ok) {
-          throw response.json();
-        }
-  
-        return response.json();
-      })
-      .then(function (locRes) {
-        // write query to page so user knows what they are viewing
-        resultTextEl.textContent = locRes.search.query;
-  
-        console.log(locRes);
-  
-        if (!locRes.results.length) {
-          console.log('No results found!');
-          resultContentEl.innerHTML = '<h3>No results found, search again!</h3>';
-        } else {
-          resultContentEl.textContent = '';
-          for (var i = 0; i < locRes.results.length; i++) {
-            printSavedResults(locRes.results[i]);
-          }
-        }
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
-  }
-  */
-//*****Search History Display Function**** 
-/*
-function printSavedResults(resultObj) {
-    console.log(resultObj);
-  
-    // set up `<div>` to hold result content
-    var searchedCard = document.createElement('div');
-    searchedCard.classList.add('card', 'bg-light', 'text-dark', 'mb-3', 'p-3');
-  
-    var resultBody = document.createElement('div');
-    resultBody.classList.add('card-body');
-    searchedCard.append(resultBody);
-  
-    var titleEl = document.createElement('h3');
-    titleEl.textContent = resultObj.title;
-  
-    var bodyContentEl = document.createElement('p');
-    bodyContentEl.innerHTML +=
-      '<strong>Temp:</strong> ' + resultObj.date + '<br/>';
-  
-    bodyContentEl.innerHTML +=
-        '<strong>Wind:</strong> ' + resultObj.date + '<br/>';
-
-    bodyContentEl.innerHTML +=
-        '<strong>Humidity:</strong>' + resultObj.date + '<br/>';
-  
-  
-    resultBody.append(titleEl, bodyContentEl, linkButtonEl);
-  
-    searchHistoryDiv.append(searchedCard);
-  }
-
-
-
-
-//----------------Five day forecast feature--------------
-
-*/

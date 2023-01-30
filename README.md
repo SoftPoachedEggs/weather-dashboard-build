@@ -18,7 +18,7 @@ Public use for informational purposes only.
 
 ## Link
 
-[Work Day Scheduler](https://softpoachedeggs.github.io/refactor-daily-planner/)
+[Weather Dashboard](https://softpoachedeggs.github.io/weather-dashboard-build/)
 
 ## License
 
